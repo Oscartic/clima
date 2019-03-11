@@ -37,6 +37,7 @@ class Formulario extends Component {
                                     <option value="" defaultValue>Selecciona un País</option>
                                     <option value="AR">Argentina</option>
                                     <option value="CO">Colombia</option>
+                                    <option value="CL">Chile</option>
                                     <option value="CR">Costa Rica</option>
                                     <option value="ES">España</option>
                                     <option value="US">Estados Unidos</option>
