@@ -2,17 +2,21 @@ import React, { Component } from 'react';
 import Header from './componentes/Header';
 import Formulario from './componentes/Formulario';
 import Error from './componentes/Error';
+import Clima from './componentes/Clima';
 
 
 class App extends Component {
 
   state = {
     error: '', 
-    consulta : {}
+    consulta : {}, 
+    resultado : {}
   }
 
-  componentDidUpdate() {
-    this.consultarApi();
+  componentDidUpdate(prevProps, prevState) {
+    if(prevState.consulta !== this.state.consulta){
+      this.consultarApi();
+    }
   }
 
   componentDidMount() {
@@ -25,14 +29,23 @@ class App extends Component {
     const { ciudad, pais } = this.state.consulta;
     if(!ciudad || !pais) return null;
 
+    // leer la url y agregar el Api key
     const appid = 'e3646bbc406abe0aa693067648112d7d';
     let url = `http://api.openweathermap.org/data/2.5/weather?q=${ ciudad },${ pais }&appid=${appid}`;
-    console.log(url);
+    
     // query con fetch api
-   
-    // leer la url y agregar el Api key
-
-    // Consultar con fetch 
+    fetch(url)
+      .then(respuesta => {
+        return respuesta.json();
+      })
+      .then(datos =>{
+        this.setState({
+          resultado : datos
+        })
+      })
+      .catch(error => {
+        console.log(error)
+      })
  
   }
 
@@ -43,7 +56,8 @@ class App extends Component {
       });
     } else {
       this.setState({
-        consulta: respuesta
+        consulta: respuesta, 
+        error: false
       });
     }
 
@@ -53,10 +67,12 @@ class App extends Component {
 
     const error = this.state.error;
 
-    let respuesta; 
+    let resultado; 
 
     if(error) {
-      respuesta =  <Error mensaje="Ambos campos son obligatorios" />
+      resultado =  <Error mensaje="Ambos campos son obligatorios" />
+    } else {
+      resultado = <Clima resultado = { this.state.resultado } />
     }
 
     return (
@@ -70,7 +86,7 @@ class App extends Component {
           datosConsulta = { this.datosConsulta }
         />
 
-        { respuesta }
+        { resultado }
       </div>
     );
   }
